@@ -1,0 +1,41 @@
+version: "2.6"
+
+services:
+  db:
+    image: redis
+    container_name: m-redis
+    ports:
+      - "6379:6379"
+    networks:
+      - order
+#    volumes:
+#      - database_redis:/var/lib/redis/data
+
+  mysqldb:
+    image: mysql
+    container_name: m-mysql
+    ports:
+      - "3306:3306"
+    networks:
+      - order
+#    volumes:
+#      - database_mysql:/var/lib/mysql/data
+
+  web:
+    build: .
+    container_name: orderapp
+    ports:
+      - '3000:3000'
+    env_file:
+      - .env
+    depends_on:
+      - db
+    networks:
+      - order
+#  working_dir: /go/src/github.com/greenbahar/manage-order-storage
+#  volumes:
+#    - .:/go/src
+
+networks:
+  order:
+    driver: bridge
